@@ -14,28 +14,100 @@ namespace RobotController
             int x = 0;
             int y = 0;
             char orientation = 'W';
+            bool isXValid = false;
+            bool isYValid = false;
+            bool isOrientationValid = false;
             await Task.Run(() =>
             {
-                Console.Write("Enter the start X coordinate: ");
-                x = int.Parse(Console.ReadLine());
-
-                Console.Write("Enter the start Y coordinate: ");
-                y = int.Parse(Console.ReadLine());
-                Console.Write("Enter the Orientation (N, E, S, W): ");
-                orientation = char.Parse(Console.ReadLine().ToUpper());             
-                if (x < 0 || x >= maxWidth || y < 0 || y >= maxDepth)
+                while (!isXValid || !isYValid || !isOrientationValid)
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.Write($"ERROR: Out of bounds at {x} {y}\n");
-                    Console.ResetColor();
-                }
-                if (orientation != 'N' && orientation != 'E' && orientation != 'S' && orientation != 'W')
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.Write("Invalid orientation. Please Enter one of N, E, S, W.");
-                    Console.ResetColor();
+                    try
+                    {
+                        if (!isXValid)
+                        {
+                            Console.Write("Enter the start X coordinate: ");
+                            string? inputX = Console.ReadLine();
+                            if (string.IsNullOrWhiteSpace(inputX))
+                            {
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.WriteLine("X coordinate cannot be empty. Please enter a value.");
+                                Console.ResetColor();
+                            }
+                            else
+                            {
+                                x = int.Parse(inputX);
+                                if (x < 0 || x >= maxWidth)
+                                {
+                                    Console.ForegroundColor = ConsoleColor.Red;
+                                    Console.WriteLine($"ERROR: X coordinate out of bounds. Please enter a value between 0 and {maxWidth - 1}.");
+                                    Console.ResetColor();
+                                }
+                                else
+                                {
+                                    isXValid = true;
+                                }
+                            }
+                        }
+                        if (isXValid && !isYValid)
+                        {
+                            Console.Write("Enter the start Y coordinate: ");
+                            string? inputY = Console.ReadLine();
+                            if (string.IsNullOrWhiteSpace(inputY))
+                            {
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.WriteLine("Y coordinate cannot be empty. Please enter a value.");
+                                Console.ResetColor();
+                            }
+                            else
+                            {
+                                y = int.Parse(inputY);
+                                if (y < 0 || y >= maxDepth)
+                                {
+                                    Console.ForegroundColor = ConsoleColor.Red;
+                                    Console.WriteLine($"ERROR: Y coordinate out of bounds. Please enter a value between 0 and {maxDepth - 1}.");
+                                    Console.ResetColor();
+                                }
+                                else
+                                {
+                                    isYValid = true;
+                                }
+                            }
+                        }
+                        if (isXValid && isYValid && !isOrientationValid)
+                        {
+                            Console.Write("Enter the Orientation (N, E, S, W): ");
+                            string inputOrientation = Console.ReadLine().ToUpper();
+                            if (string.IsNullOrWhiteSpace(inputOrientation) || inputOrientation.Length != 1)
+                            {
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.WriteLine("Invalid orientation. Please enter one of N, E, S, W.");
+                                Console.ResetColor();
+                            }
+                            else
+                            {
+                                orientation = char.Parse(inputOrientation);
+                                if (orientation != 'N' && orientation != 'E' && orientation != 'S' && orientation != 'W')
+                                {
+                                    Console.ForegroundColor = ConsoleColor.Red;
+                                    Console.WriteLine("Invalid orientation. Please enter one of N, E, S, W.");
+                                    Console.ResetColor();
+                                }
+                                else
+                                {
+                                    isOrientationValid = true;
+                                }
+                            }
+                        }
+                    }
+                    catch (FormatException)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Invalid input format. Please enter numeric values for coordinates.");
+                        Console.ResetColor();
+                    }
                 }
             });
+
             return (x, y, orientation);
         }
         public static char TurnLeft(char orientation)
@@ -67,58 +139,26 @@ namespace RobotController
             switch (orientation)
             {
                 case 'N':
-                    newX--;
+                    newY--;
                     break;
                 case 'E':
-                    newY++;
-                    break;
-                case 'S':
                     newX++;
                     break;
+                case 'S':
+                    newY++;
+                    break;
                 case 'W':
-                    newY--;
+                    newX--;
                     break;
             }
             if (newX < 0 || newX >= floor.GetLength(0) || newY < 0 || newY >= floor.GetLength(1))
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.Write($"ERROR: Out of bounds at {newY} {newX}\n");  
+                Console.Write($"ERROR: Out of bounds at {newX} {newY}\n");  
                 Console.ResetColor();
             }
             x = newX;
             y = newY;
-        }
-        public static void DisplayNewMesh(Field[,] floor, ref int x, ref int y, char orientation)
-        {
-            int newX = x;
-            int newY = y;
-            for (int i = 0; i < floor.GetLength(0); i++)
-            {
-                for (int j = 0; j < floor.GetLength(1); j++)
-                {
-                    if (i == newX && j == newY)
-                    {
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.Write($"{orientation} ");
-                        Console.ResetColor();
-                    }
-                    else
-                    {
-                        Console.Write($"{floor[i, j].Value} ");
-                    }
-                    if (floor[i, j].Right != null)
-                        Console.Write("- ");
-                }
-                Console.WriteLine();
-                for (int j = 0; j < floor.GetLength(1); j++)
-                {
-                    if (floor[i, j].Bottom != null)
-                        Console.Write("|   ");
-                    else
-                        Console.Write("    ");
-                }
-                Console.WriteLine();
-            }
         }
     }
 }

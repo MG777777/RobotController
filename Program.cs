@@ -21,6 +21,7 @@ namespace RobotController
                 Field[,] floor = new Field[depth, width];
                 InitializeFields(floor);
                 InitializeWires(floor);
+                //InitializeFieldsAndWires(floor);
                 var position = await GetPositionAndOrientationAsync(width, depth);
                 int X = position.x;
                 int Y = position.y;
@@ -31,10 +32,10 @@ namespace RobotController
                 try
                 {
                     ProcessCommands(floor, ref X, ref Y, ref orientation, commands);
-                    DisplayNewMesh(floor, ref X, ref Y, orientation);
+                    DisplayMesh(floor, X, Y, orientation);
                     if (X >= 0 && Y >= 0)
                     {
-                        Console.WriteLine($"Report: {Y} {X} {orientation}");
+                        Console.WriteLine($"Report: {X} {Y} {orientation}");
                     }
                 }
                 catch (Exception ex)

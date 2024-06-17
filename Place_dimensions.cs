@@ -12,12 +12,72 @@ namespace RobotController
         {
             int width = 0;
             int depth = 0;
+            bool iswidthValid = false;
+            bool isdepthValid = false;
+
             await Task.Run(() =>
             {
-                Console.Write("Enter the width of the floor: ");
-                width = int.Parse(Console.ReadLine());
-                Console.Write("Enter the depth of the floor: ");
-                depth = int.Parse(Console.ReadLine());
+                while (!iswidthValid || !isdepthValid)
+                {
+                    try
+                    {
+                        if (!iswidthValid)
+                        {
+                            Console.Write("Enter the width of the floor: ");
+                            width  = int.Parse(Console.ReadLine());
+                            if(width == null)
+                            {
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.WriteLine("Width dimension cannot be empty. Please enter a value.");
+                                Console.ResetColor();
+                            }
+                            else
+                            {
+                                if(width <= 0)
+                                {
+                                    Console.ForegroundColor = ConsoleColor.Red;
+                                    Console.WriteLine($"ERROR: width dimention cannot be zero or less zero. Please enter a value above zero");
+                                    Console.ResetColor();
+                                }
+                                else
+                                {
+                                    iswidthValid = true;
+                                }
+                            }
+                            if (iswidthValid && !isdepthValid) 
+                            {
+                                Console.Write("Enter the depth of the floor: ");
+                                depth = int.Parse(Console.ReadLine());
+                                if(depth == null)
+                                {
+                                    Console.ForegroundColor = ConsoleColor.Red;
+                                    Console.WriteLine("depth dimention cannot be empty. Please enter a value.");
+                                    Console.ResetColor();
+                                }
+                                else 
+                                {
+
+                                    if(depth <= 0)
+                                    {
+                                        Console.ForegroundColor = ConsoleColor.Red;
+                                        Console.WriteLine($"ERROR: depth dimention cannot be zero or less zero. Please enter a value above zero");
+                                        Console.ResetColor();
+                                    }
+                                    else
+                                    {
+                                        isdepthValid = true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    catch (FormatException)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Invalid input format. Please enter numeric values for floor dimension.");
+                        Console.ResetColor();
+                    }
+                }
             });
             return (width, depth);
         }
@@ -25,14 +85,10 @@ namespace RobotController
         {
             for (int i = 0; i < floor.GetLength(0); i++)
             {
+                
                 for (int j = 0; j < floor.GetLength(1); j++)
                 {
-                    floor[i, j] = new Field
-                    {
-                        X = i,
-                        Y = j,
-                        Value = 0
-                    };
+                    floor[i, j] = new Field();
                 }
             }
         }
