@@ -15,8 +15,8 @@ When you start the app, try to test this example to make sure it is working corr
 **Example:**
 1. Enter the width of the floor: `5`
 2. Enter the depth of the floor: `5`
-3. Enter the start X coordinate: `2`
-4. Enter the start Y coordinate: `1`
+3. Enter the start X coordinate: `1`
+4. Enter the start Y coordinate: `2`
 5. Enter the orientation: `N`
 6. Enter the navigation commands: `RFRFFRFRF`, then hit enter.
 
